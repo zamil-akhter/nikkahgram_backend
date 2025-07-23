@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { User } from "./user.entity";
-import { Types } from "mongoose";
+import { Document, Types } from "mongoose";
 import { MediaType } from "src/helpers/enums";
 
 @Schema({timestamps: true})

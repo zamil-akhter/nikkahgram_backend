@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Types } from "mongoose";
+import { Document, Types } from "mongoose";
 import { LoginTypeEnum, ReferenceCreatedBy, ReferenceStatus, ReferenceType, userRole } from "src/helpers/enums";
 import { User } from "./user.entity";
 
@@ -8,11 +8,11 @@ export class Reference extends Document {
     @Prop({ type: Types.ObjectId, ref: User.name, default: null })                    //null if its created by admin
     userId: Types.ObjectId;
 
-    @Prop({type: ReferenceCreatedBy, default: ReferenceCreatedBy.USER })
+    @Prop({enum: ReferenceCreatedBy, default: ReferenceCreatedBy.USER })
     createdBy: string;                                                            
 
     @Prop({type: Types.ObjectId, ref: User.name, default: null})
-    assignedTo: string;
+    assignedTo: Types.ObjectId;
 
     @Prop({ default: "" })
     name: string;
@@ -33,10 +33,10 @@ export class Reference extends Document {
     gender: string;
 
     @Prop({enum: ReferenceType, default: ReferenceType.M1 })
-    type: ReferenceType;
+    type: string;
 
     @Prop({enum: ReferenceStatus, default: ReferenceStatus.USERSAVED })
-    status: ReferenceStatus;
+    status: string;
 
 }
 
