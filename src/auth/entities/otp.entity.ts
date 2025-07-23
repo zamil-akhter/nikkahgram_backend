@@ -16,9 +16,6 @@ export class Otp extends Document {
     phoneNumber: string;
 
     @Prop({default: ""})
-    createdAt: Date;
-
-    @Prop({default: ""})
     expiresAt: Date;
 }
 
