@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { LoginDto } from './dto/create-auth.dto';
+import { LogInDto } from './dto/create-auth.dto';
 import { messages } from 'src/helpers/message';
 
 @Injectable()
 export class AuthService {
   async login(
-    dto: LoginDto,
-  ): Promise<{ success: boolean; message: string; data?: LoginDto }> {
+    dto: LogInDto,
+  ): Promise<{ success: boolean; message: string; data?: LogInDto }> {
     try {
       return { success: true, message: messages.LOGIN_SUCCESS, data: dto };
     } catch (error) {
