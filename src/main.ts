@@ -6,11 +6,16 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
+  const moduleConfigurations: any = {
+    cors: false,
+    rawBody: true
+  };
   const app = await NestFactory.create(AppModule);
 
   // Get ConfigService
   const configService = app.get(ConfigService);
 
+  app.enableCors({ origin: '*' });
   // checking swagger enable
   const swaggerEnabled = configService.get<string>('SWAGGER_ENABLE') === 'true';
   if (swaggerEnabled) {
