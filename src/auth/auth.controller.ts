@@ -1,34 +1,42 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Res,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { LoginDto } from './dto/create-auth.dto';
+import { ResponseHandler } from 'src/helpers/response-handler';
+import { Response } from 'express';
+import { LoginSwagger } from './auth.swagger';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly responseHandler: ResponseHandler,
+  ) {}
 
-  @Post()
-  create(@Body() createAuthDto: CreateAuthDto) {
-    return this.authService.create(createAuthDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.authService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.authService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-    return this.authService.update(+id, updateAuthDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.authService.remove(+id);
+  @Post('login')
+  // @UseGuards(AuthGuard)
+  @LoginSwagger()
+  async logIn(@Res() res: Response, @Body() dto: LoginDto) {
+    try {
+      const result = await this.authService.login(dto);
+      if (result.success) {
+        return this.responseHandler.successResponseWithData(
+          res,
+          result.message,
+          result.data,
+        );
+      }
+      return this.responseHandler.errorResponse(res, result.message);
+    } catch (error) {
+      return this.responseHandler.catchErrorResponse(res);
+    }
   }
 }
