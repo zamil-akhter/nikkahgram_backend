@@ -3,8 +3,9 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Otp, OtpSchema } from './entities/otp.entity';
-import { UsersModule } from 'src/users/users.module';
 import { ResponseHandler } from 'src/helpers/response-handler';
+import { CommonService } from 'src/helpers/common.service';
+import { UsersModule } from 'src/users/users.module';
 import { SendEmailService } from 'src/helpers/utility';
 
 @Module({
@@ -15,6 +16,6 @@ import { SendEmailService } from 'src/helpers/utility';
     ]),
   ],
   controllers: [AuthController],
-  providers: [AuthService, ResponseHandler, SendEmailService],
+  providers: [AuthService,ResponseHandler,CommonService, SendEmailService],
 })
 export class AuthModule {}

@@ -1,27 +1,53 @@
+import { User } from './../users/entities/user.entity';
+import { CommonService } from './../helpers/common.service';
 import { Injectable } from '@nestjs/common';
-import { LoginDto, VerifyOtpDto } from './dto/create-auth.dto';
+import { LoginDto, SendOtpDto, SignUpDto, VerifyOtpDto } from './dto/create-auth.dto';
 import { messages } from 'src/helpers/message';
-import { InjectModel } from '@nestjs/mongoose';
-import mongoose, { Model } from 'mongoose';
-import * as bcrypt from 'bcrypt';
 import { Otp } from './entities/otp.entity';
-import { User } from 'src/users/entities/user.entity';
+import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
+import { InjectModel } from '@nestjs/mongoose';
 import { SendEmailService } from 'src/helpers/utility';
+import mongoose, { Model } from 'mongoose';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectModel(User.name) private userModel: Model<User>,
-    // @InjectModel(Subscription.name) private subscriptionModel: Model<Subscription>,
     @InjectModel(Otp.name) private otpModel: Model<Otp>,
+    // @InjectModel(Subscription.name) private subscriptionModel: Model<Subscription>,
+    @InjectModel(User.name) private userModel: Model<User>,
+    private readonly commonService: CommonService,
     private readonly mailService: SendEmailService,
-  ) { }
-  async signIn(
-    dto: LoginDto,
-  ): Promise<{ success: boolean; message: string; data?: object }> {
+  ) {}
+
+  async sendOtp(dto: SendOtpDto): Promise<{ success: boolean; message: string; data?: SendOtpDto }> {
     try {
-      const user = await this.userModel.findOne({ $or: [{ email: dto.email }, { username: dto.email }] })
+      const { email, phoneNumber, countryCode } = dto;
+
+      // const otp = this.commonService.generateOtp();
+      const otp = '1234';
+      const expiresAt = new Date(Date.now() + 2 * 60 * 1000); // 2 minutes expiry
+
+      const isUserExists = await this.userModel.findOne({ phoneNumber });
+      if (isUserExists) {
+        return { success: false, message: messages.PHONE_NUMBER_EXISTS };
+      }
+
+      const storedOtp = await this.otpModel.findOneAndUpdate({ phoneNumber }, { phoneNumber, otp, expiresAt }, { new: true, upsert: true });
+      if (!storedOtp) {
+        return { success: false, message: messages.FAILED_TO_STORE_OTP };
+      }
+
+      return { success: true, message: messages.OTP_SENT_SUCCESSFULLY };
+    } catch (error) {
+      console.log(`Error in sendOtp: ${error}`);
+      return { success: false, message: messages.FAILED_TO_STORE_OTP };
+    }
+  }
+
+  async signIn(dto: LoginDto): Promise<{ success: boolean; message: string; data?: object }> {
+    try {
+      const user = await this.userModel.findOne({ $or: [{ email: dto.email }, { username: dto.email }] });
       if (user) {
         const isPasswordValid = await bcrypt.compare(dto.password, user.password);
         if (!isPasswordValid) {
@@ -31,22 +57,21 @@ export class AuthService {
         // if(!checkSubscription){
         //   return { success: false, message: messages.SUBSCRIPTION_EXPIRED };
         // }
-        const otp = await this.mailService.sendOtpToEmail(user.email)
-        console.log("otp", otp)
-        return { success: true, message: messages.LOGIN_SUCCESS, data: user};
-      }
-      else{
-        if(!dto.email.includes("@")) {
-          return { success: false, message: messages.USERNAME_DOES_NOT_EXISTS} 
+        const otp = await this.mailService.sendOtpToEmail(user.email);
+        console.log('otp', otp);
+        return { success: true, message: messages.LOGIN_SUCCESS, data: user };
+      } else {
+        if (!dto.email.includes('@')) {
+          return { success: false, message: messages.USERNAME_DOES_NOT_EXISTS };
         }
         const hashedPassword = await bcrypt.hash(dto.password, 10);
         const createUser = await this.userModel.create({
           email: dto.email,
           password: hashedPassword,
-        })
-        const otp = await this.mailService.sendOtpToEmail(createUser.email)
-        console.log("otp", otp)
-        return { success: true, message: messages.LOGIN_SUCCESS, data: createUser};
+        });
+        const otp = await this.mailService.sendOtpToEmail(createUser.email);
+        console.log('otp', otp);
+        return { success: true, message: messages.LOGIN_SUCCESS, data: createUser };
       }
     } catch (error) {
       console.log(error);
@@ -54,9 +79,7 @@ export class AuthService {
     }
   }
 
-
-  async verifyOtp(verifyOtpDto: VerifyOtpDto
-  ): Promise<{ success: boolean, message: string, data?: object }> {
+  async verifyOtp(verifyOtpDto: VerifyOtpDto): Promise<{ success: boolean; message: string; data?: object }> {
     const { otp, email } = verifyOtpDto;
     // const findUser = await this.userModel.findOne({ phoneNumber: phoneNumber });
     // if (!findUser) {
@@ -71,10 +94,7 @@ export class AuthService {
     }
     await this.otpModel.deleteOne({ email });
     const findUser = await this.userModel.findOne({ email });
-    const token = jwt.sign(
-      { email },
-      process.env.JWT_SECRET,
-    )
-    return { success: true, message: messages.OTP_VERIFIED, data: {userData: findUser, token: token} };
+    const token = jwt.sign({ email }, process.env.JWT_SECRET);
+    return { success: true, message: messages.OTP_VERIFIED, data: { userData: findUser, token: token } };
   }
 }

@@ -1,6 +1,9 @@
 export const messages = {
   LOGIN_SUCCESS: "Login successful",
   LOGIN_FAILED: "Login failed",
+  FAILED_TO_STORE_OTP: "Failed to store OTP",
+  OTP_SENT_SUCCESSFULLY: "OTP sent successfully",
+  PHONE_NUMBER_EXISTS: "Phone number already exists",
   USER_NOT_FOUND: "User not found",
   INVALID_PASSWORD: "Invalid password",
   OTP_GENERATION_FAILED: "OTP generation failed",
