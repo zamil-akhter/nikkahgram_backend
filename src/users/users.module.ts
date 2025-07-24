@@ -18,5 +18,6 @@ import { Reference, ReferenceSchema } from './entities/reference.entity';
   ],
   controllers: [UsersController],
   providers: [UsersService],
+  exports: [MongooseModule],
 })
 export class UsersModule {}

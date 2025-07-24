@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ExecutionTimeInterceptor } from './interceptors/execution-time.interceptor';
 
 async function bootstrap() {
   const logger = new Logger('Bootstrap');
@@ -12,6 +13,7 @@ async function bootstrap() {
   };
   const app = await NestFactory.create(AppModule);
 
+  app.useGlobalInterceptors(new ExecutionTimeInterceptor());
   // Get ConfigService
   const configService = app.get(ConfigService);
 

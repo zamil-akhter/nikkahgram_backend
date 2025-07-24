@@ -1,19 +1,90 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString, Matches } from 'class-validator';
 
-export class LogInDto {
+export class SendOtpDto {
+  @ApiProperty( { example: 'test@example.com' })
+  @IsOptional()
+  @IsEmail()
+  email: string;
+
+  @ApiProperty({ example: '+91' })
+  @IsOptional()
+  @IsString()
+  countryCode: string;
+
+  @ApiProperty({ example: '8974567890' })
+  @IsOptional()
+  @IsString()
+  @Matches(/^\+?[1-9]\d{1,14}$/, {
+    message: 'Phone number must be a valid',
+  }) // Ensures a valid phone format
+  phoneNumber: string;
+}
+
+export class LoginDto {
+
   @ApiProperty()
-  @IsNotEmpty()
+  @IsOptional()
+  @IsString()
   email: string;
 
   @ApiProperty()
   @IsNotEmpty()
+  @IsString()
   password: string;
+}
+
+
+export class VerifyOtpDto{
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  otp: string;
+
+  @IsNotEmpty()
+  @IsEmail()
+  @ApiProperty()
+  email: string;
 }
 
 export class SignUpDto {
   @ApiProperty()
-  @IsNotEmpty()
-  gender: string;
+  @IsOptional()
+  firstName: string;
 
+  @ApiProperty()
+  @IsOptional()
+  lastName: string;
+
+  @ApiProperty()
+  @IsOptional()
+  email: string;
+
+  @IsOptional()
+  @ApiProperty()
+  backupEmail: string;
+
+  @IsOptional()
+  @ApiProperty()
+  password: string;
+
+  @IsOptional()
+  @ApiProperty()
+  countryCode: string;
+
+  @IsOptional()
+  @ApiProperty()
+  phoneNumber: string;
+
+  @IsOptional()
+  @ApiProperty()
+  dateOfBirth: Date;
+
+  @IsOptional()
+  @ApiProperty()
+  userName: string;
+
+  @ApiProperty()
+  @IsOptional()
+  gender: string;
 }
