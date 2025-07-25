@@ -98,9 +98,9 @@ export class OnboardingService {
   }
 
   async updateUser(dto: UpdateUserDto, user: User): Promise<{ success: boolean; message: string; data?: object }> {
-    const { maritalStatus, maritalCategory, childrenStatus } = dto;
+    const { maritalStatus, maritalCategory } = dto;
     const updatedUser = await this.userModel.findByIdAndUpdate(user._id, dto, { new: true });
     return { success: true, message: messages.OTP_VERIFIED, data: { userData: updatedUser } };
   }
-  
+
 }
