@@ -64,9 +64,6 @@ export class User extends Document {
   @Prop({ default: false })
   contactBySocialMedia: boolean;
 
-  @Prop({ default: null })
-  currentAge: number;
-
   @Prop({ default: '' })
   maritalStatus: string;
 

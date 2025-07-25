@@ -1,50 +1,10 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiBadRequestResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { InternalServerErrorSwagger, UnauthorizedSwagger } from 'src/helpers/common.service';
+import { InternalServerErrorSwagger, UnauthorizedSwagger } from 'src/helpers/utility';
 
 // @ApiTags at the controller level
 export const AuthTag = () => {
   return applyDecorators(ApiTags('Auth'));
-};
-
-// Swagger decorator for SendOtpSwagger()
-export const SendOtpSwagger = () => {
-  return applyDecorators(
-    ApiOperation({ summary: 'Send Otp to phone number' }),
-    ApiResponse({
-      status: 200,
-      description: 'Otp sent successfully',
-      schema: {
-        example: {
-          statusCode: 200,
-          message: 'Otp sent successfully',
-        },
-      },
-    }),
-    ApiBadRequestResponse({
-      description: 'Bad Request',
-      content: {
-        'application/json': {
-          examples: {
-            PhoneAlreadyExists: {
-              value: {
-                statusCode: 400,
-                message: 'Phone number already exists',
-              },
-            },
-            InvalidPhoneNumber: {
-              value: {
-                statusCode: 400,
-                message: 'Phone number must be a valid',
-              },
-            },
-          },
-        },
-      },
-    }),
-    UnauthorizedSwagger(),
-    InternalServerErrorSwagger(),
-  );
 };
 
 // Swagger decorator for signIn()
