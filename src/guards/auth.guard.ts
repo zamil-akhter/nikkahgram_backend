@@ -1,4 +1,5 @@
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, ForbiddenException } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { InjectModel } from '@nestjs/mongoose';
 import { Request } from 'express';
 import { Model } from 'mongoose';
@@ -10,9 +11,14 @@ export class AuthGuard implements CanActivate {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
     private readonly jwtService: JwtService,
+    private readonly reflector: Reflector
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    const isPublic = this.reflector.get<boolean>("isPublic", context.getHandler())
+    if (isPublic) {
+      return true
+    }
     const request: any = context.switchToHttp().getRequest<Request>();
     const token = this.extractTokenFromHeader(request);
     if (!token) {
@@ -40,7 +46,7 @@ export class AuthGuard implements CanActivate {
 
   private extractTokenFromHeader(request: Request): string | null {
     const authHeader = request.headers.authorization;
-    if (!authHeader) {
+    if (!authHeader) { 
       return null;
     }
     return authHeader.split(' ')[1];

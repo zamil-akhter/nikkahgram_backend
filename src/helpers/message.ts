@@ -12,4 +12,13 @@ export const messages = {
   OTP_EXPIRED: "OTP expired",
   OTP_VERIFIED: "OTP verified",
   USERNAME_DOES_NOT_EXISTS: "Username does not exists",
+  INTERNAL_SERVER_ERROR: "Internal server error",
+  FAILED_TO_SEND_OTP: "Failed to send OTP",
+  PASSWORD_ALREADY_EXISTS: "Password already exists",
+  FAILED_TO_RESET_PASSWORD: "Failed to reset password",
+  PASSWORD_RESET_SUCCESSFULLY: "Password reset successfully",
+  INVALID_ROLE: "Invalid role",
+  INPUT_MUST_BE_AN_ARRAY: "Input must be an array",
+  SUCCESS_RESPONSE:"Success",
+  NO_DATA_FOUND: "No data found"
 };

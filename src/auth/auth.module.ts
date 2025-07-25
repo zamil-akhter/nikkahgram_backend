@@ -7,6 +7,7 @@ import { ResponseHandler } from 'src/helpers/response-handler';
 import { CommonService } from 'src/helpers/common.service';
 import { UsersModule } from 'src/users/users.module';
 import { SendEmailService } from 'src/helpers/utility';
+import { JwtService } from 'src/helpers/jwt.service';
 
 @Module({
   imports:[
@@ -16,6 +17,6 @@ import { SendEmailService } from 'src/helpers/utility';
     ]),
   ],
   controllers: [AuthController],
-  providers: [AuthService,ResponseHandler,CommonService, SendEmailService],
+  providers: [AuthService,ResponseHandler,CommonService, SendEmailService, JwtService],
 })
 export class AuthModule {}

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsOptional, IsString, Matches } from 'class-validator';
+import { IsEmail, IsMongoId, IsNotEmpty, IsOptional, IsString, Matches } from 'class-validator';
 
 export class SendOtpDto {
   @ApiProperty( { example: 'test@example.com' })
@@ -87,4 +87,42 @@ export class SignUpDto {
   @ApiProperty()
   @IsOptional()
   gender: string;
+}
+
+
+export class ForgotPasswordDto{
+  @IsNotEmpty()
+  @IsEmail()
+  @ApiProperty()
+  email: string;
+}
+
+
+export class ResetPasswordDto{
+
+  @IsNotEmpty()
+  @IsMongoId()
+  @IsString()
+  userId: string;
+
+  @IsNotEmpty()
+  @IsEmail()
+  @ApiProperty()
+  password: string;
+
+
+}
+
+
+export class AdminLoginDto{
+
+  @IsNotEmpty()
+  @IsEmail()
+  @ApiProperty()
+  email: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  password: string;
 }

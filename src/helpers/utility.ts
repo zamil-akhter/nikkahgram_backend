@@ -12,26 +12,26 @@ export class SendEmailService {
 
   async sendOtpToEmail(
     email: string,
+    otp: string
   ): Promise<any> {
     // const pageUrl = `https://devapp.nrs-crm.com/auth/officer_sup/newpassword?token=${token}`
-    const otp = await generateOtp();
-    const emailContent = await ejs.renderFile(
-      path.join(__dirname, '..', '..', '..', 'views', 'email2.ejs'),
-      {
-        otp: otp
-      },
-    );
-    const msg = {
-      to: `${email}`,
-      from: { email: `${process.env.SEND_GRID_EMAIL}`, name: 'NRS-APPLIANCE-REPAIR-CRM' },
-      subject: 'Tim CRM Testing Sfs',
-      html: emailContent,
-    };
+    // const emailContent = await ejs.renderFile(
+    //   path.join(__dirname, '..', '..', '..', 'views', 'email2.ejs'),
+    //   {
+    //     otp: otp
+    //   },
+    // );
+    // const msg = {
+    //   to: `${email}`,
+    //   from: { email: `${process.env.SEND_GRID_EMAIL}`, name: 'NRS-APPLIANCE-REPAIR-CRM' },
+    //   subject: 'Tim CRM Testing Sfs',
+    //   html: emailContent,
+    // };
 
     try {
     //   const response = await sgMail.send(msg);
+    console.log('Email sent successfully:', otp);
     return otp
-      console.log('Email sent successfully:', otp);
     } catch (error) {
       console.error(
         'Error sending email:',
