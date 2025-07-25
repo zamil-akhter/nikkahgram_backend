@@ -1,14 +1,13 @@
 import { User } from './../users/entities/user.entity';
-import { CommonService } from './../helpers/common.service';
 import { Injectable } from '@nestjs/common';
-import { LoginDto, SendOtpDto, SignUpDto, VerifyOtpDto } from './dto/create-auth.dto';
+import { LoginDto, VerifyOtpDto } from './dto/create-auth.dto';
 import { messages } from 'src/helpers/message';
 import { Otp } from './entities/otp.entity';
 import * as bcrypt from 'bcrypt';
-import * as jwt from 'jsonwebtoken';
 import { InjectModel } from '@nestjs/mongoose';
-import { SendEmailService } from 'src/helpers/utility';
+import { generateOtp, SendEmailService } from 'src/helpers/utility';
 import mongoose, { Model } from 'mongoose';
+import { JwtService } from 'src/helpers/jwt.service';
 
 @Injectable()
 export class AuthService {
@@ -16,34 +15,9 @@ export class AuthService {
     @InjectModel(Otp.name) private otpModel: Model<Otp>,
     // @InjectModel(Subscription.name) private subscriptionModel: Model<Subscription>,
     @InjectModel(User.name) private userModel: Model<User>,
-    private readonly commonService: CommonService,
     private readonly mailService: SendEmailService,
+    private readonly jwtService: JwtService,
   ) {}
-
-  async sendOtp(dto: SendOtpDto): Promise<{ success: boolean; message: string; data?: SendOtpDto }> {
-    try {
-      const { email, phoneNumber, countryCode } = dto;
-
-      // const otp = this.commonService.generateOtp();
-      const otp = '1234';
-      const expiresAt = new Date(Date.now() + 2 * 60 * 1000); // 2 minutes expiry
-
-      const isUserExists = await this.userModel.findOne({ phoneNumber });
-      if (isUserExists) {
-        return { success: false, message: messages.PHONE_NUMBER_EXISTS };
-      }
-
-      const storedOtp = await this.otpModel.findOneAndUpdate({ phoneNumber }, { phoneNumber, otp, expiresAt }, { new: true, upsert: true });
-      if (!storedOtp) {
-        return { success: false, message: messages.FAILED_TO_STORE_OTP };
-      }
-
-      return { success: true, message: messages.OTP_SENT_SUCCESSFULLY };
-    } catch (error) {
-      console.log(`Error in sendOtp: ${error}`);
-      return { success: false, message: messages.FAILED_TO_STORE_OTP };
-    }
-  }
 
   async signIn(dto: LoginDto): Promise<{ success: boolean; message: string; data?: object }> {
     try {
@@ -81,10 +55,10 @@ export class AuthService {
 
   async verifyOtp(verifyOtpDto: VerifyOtpDto): Promise<{ success: boolean; message: string; data?: object }> {
     const { otp, email } = verifyOtpDto;
-    // const findUser = await this.userModel.findOne({ phoneNumber: phoneNumber });
-    // if (!findUser) {
-    //   return { success: false, message: messages.PHONE_NUMBER_NOT_FOUND };
-    // }
+    const findUser = await this.userModel.findOne({ email });
+    if (!findUser) {
+      return { success: false, message: messages.USER_NOT_FOUND };
+    }
     const checkOtp = await this.otpModel.findOne({ email, otp });
     if (!checkOtp) {
       return { success: false, message: messages.INVALID_OTP };
@@ -92,9 +66,9 @@ export class AuthService {
     if (checkOtp.expiresAt < new Date()) {
       return { success: false, message: messages.OTP_EXPIRED };
     }
+
     await this.otpModel.deleteOne({ email });
-    const findUser = await this.userModel.findOne({ email });
-    const token = jwt.sign({ email }, process.env.JWT_SECRET);
+    const token = this.jwtService.sign({ sub: findUser._id});
     return { success: true, message: messages.OTP_VERIFIED, data: { userData: findUser, token: token } };
   }
 }
