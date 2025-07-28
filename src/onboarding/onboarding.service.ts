@@ -40,21 +40,16 @@ export class OnboardingService {
   }
 
   async verifyPhoneOtp(dto: VerifyPhoneOtpDto, user: User): Promise<{ success: boolean; message: string; data?: object }> {
-    const {
-      otp,
-      email,
-      phoneNumber,
-      firstName,
-      lastName,
-      gender,
-      dateOfBirth,
-      countryCode,
-      backupEmail,
-      userName,
-      contactByWhatsapp,
-      contactByBackupEmail,
-      contactBySocialMedia,
-    } = dto;
+    const { email, phoneNumber } = dto;
+    const { password, otp, ...sanitizedDto } = dto as any;
+    console.log('senitizedDto ------->>>>> ', sanitizedDto);
+    console.log('password ------->>>>> ', password);
+
+    if (email) {
+      if (email !== user.email) {
+        return { success: false, message: messages.EMAIL_MUST_MATCH };
+      }
+    }
 
     const checkOtp = await this.otpModel.findOne({ phoneNumber, otp });
     if (!checkOtp) {
@@ -62,12 +57,6 @@ export class OnboardingService {
     }
     if (checkOtp.expiresAt < new Date()) {
       return { success: false, message: messages.OTP_EXPIRED };
-    }
-
-    if (email) {
-      if (email !== user.email) {
-        return { success: false, message: messages.EMAIL_MUST_MATCH };
-      }
     }
 
     const findUser = await this.userModel.findOne({ email });
@@ -90,7 +79,7 @@ export class OnboardingService {
 
     const updatedUser = await this.userModel.findByIdAndUpdate(
       findUser._id,
-      { ...dto, isPhoneNumberVerified: true, candidateId },
+      { ...sanitizedDto, isPhoneNumberVerified: true, candidateId },
       { new: true },
     );
     await this.otpModel.deleteOne({ phoneNumber });
@@ -99,8 +88,8 @@ export class OnboardingService {
 
   async updateUser(dto: UpdateUserDto, user: User): Promise<{ success: boolean; message: string; data?: object }> {
     const { maritalStatus, maritalCategory } = dto;
+
     const updatedUser = await this.userModel.findByIdAndUpdate(user._id, dto, { new: true });
     return { success: true, message: messages.OTP_VERIFIED, data: { userData: updatedUser } };
   }
-
 }

@@ -39,3 +39,8 @@ export enum UserRestrictionType {
   BLOCKED = 'blocked',
   RESTRICTED = 'restricted',
 }
+
+export enum SocialLoginTypeEnum{
+  GOOGLE = 'google',
+  APPLE = 'apple',
+}

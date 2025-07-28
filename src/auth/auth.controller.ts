@@ -1,9 +1,9 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { AdminLoginDto, ForgotPasswordDto, LoginDto, ResetPasswordDto, VerifyOtpDto } from './dto/create-auth.dto';
+import { AdminLoginDto, ForgotPasswordDto, LoginDto, ResetPasswordDto, SocialAuthDto, VerifyOtpDto } from './dto/create-auth.dto';
 import { ResponseHandler } from 'src/helpers/response-handler';
 import { Response } from 'express';
-import { LoginSwagger } from './auth.swagger';
+import { LoginSwagger, SocialLoginSwagger } from './auth.swagger';
 import { messages } from 'src/helpers/message';
 import { RolesGuard } from 'src/guards/role.guard';
 import { Roles } from 'src/decorators/role.decorator';
@@ -16,7 +16,6 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly responseHandler: ResponseHandler,
   ) {}
-
 
   @Post('signin')
   @Public()
@@ -33,7 +32,6 @@ export class AuthController {
     }
   }
 
-
   @Post('verify-otp')
   @Public()
   // @VerifyOtpSwagger()
@@ -49,7 +47,7 @@ export class AuthController {
     }
   }
 
-  @Post("forgot-password")
+  @Post('forgot-password')
   @Public()
   // @ForgotPasswordSwagger()
   async forgotPassword(@Res() res: Response, @Body() forgotPasswordDto: ForgotPasswordDto) {
@@ -64,9 +62,9 @@ export class AuthController {
     }
   }
 
-  @Post("verify-forgot-password-otp")
+  @Post('verify-forgot-password-otp')
   @Public()
-  // @ForgotPasswordSwagger() 
+  // @ForgotPasswordSwagger()
   async verifyForgotPasswordOtp(@Res() res: Response, @Body() verifyOtpDto: VerifyOtpDto) {
     try {
       const result = await this.authService.verifyForgotPasswordOtp(verifyOtpDto);
@@ -79,7 +77,7 @@ export class AuthController {
     }
   }
 
-  @Post("reset-password")
+  @Post('reset-password')
   @Public()
   // @ForgotPasswordSwagger()
   async resetPassword(@Res() res: Response, @Body() resetPasswordDto: ResetPasswordDto) {
@@ -96,9 +94,23 @@ export class AuthController {
 
   @Post('admin-login')
   @Public()
-  async adminLogin(@Res() res: Response, @Body() adminLoginDto: AdminLoginDto){
+  async adminLogin(@Res() res: Response, @Body() adminLoginDto: AdminLoginDto) {
     try {
       const result = await this.authService.adminLogin(adminLoginDto);
+      if (result.success) {
+        return this.responseHandler.successResponseWithData(res, result.message, result.data);
+      }
+      return this.responseHandler.errorResponse(res, result.message);
+    } catch (error) {
+      return this.responseHandler.errorResponseWithData(res, error.message, messages.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  @Post('social-auth')
+  @SocialLoginSwagger()
+  async socialAuth(@Body() socialAuthDto: SocialAuthDto, @Res() res: Response) {
+    try {
+      const result = await this.authService.socialAuth(socialAuthDto);
       if (result.success) {
         return this.responseHandler.successResponseWithData(res, result.message, result.data);
       }

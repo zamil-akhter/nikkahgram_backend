@@ -48,10 +48,6 @@ export class VerifyPhoneOtpDto {
   @IsOptional()
   backupEmail: string;
 
-  @ApiProperty()
-  @IsOptional()
-  password: string;
-
   @ApiProperty({ example: '+91' })
   @IsOptional()
   countryCode: string;
