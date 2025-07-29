@@ -40,6 +40,10 @@ export enum UserRestrictionType {
   RESTRICTED = 'restricted',
 }
 
+export enum SocialLoginTypeEnum{
+  GOOGLE = 'google',
+  APPLE = 'apple',
+}
 
 export enum SortBy{
   fullName = "1",

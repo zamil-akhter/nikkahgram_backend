@@ -48,10 +48,6 @@ export class VerifyPhoneOtpDto {
   @IsOptional()
   backupEmail: string;
 
-  @ApiProperty()
-  @IsOptional()
-  password: string;
-
   @ApiProperty({ example: '+91' })
   @IsOptional()
   countryCode: string;
@@ -85,18 +81,21 @@ export class VerifyPhoneOtpDto {
 }
 
 export class UpdateUserDto {
+  // Page 4
   @ApiProperty()
   @IsOptional()
   maritalStatus: string;
 
   @ApiProperty()
   @IsOptional()
-  maritalCategory: string;
+  children: string;
 
   @ApiProperty()
   @IsOptional()
-  childrenStatus: string;
+  maritalCategory: string;
 
+  // Page 5
+  
   @ApiProperty()
   @IsOptional()
   referenceCode: string;
@@ -141,4 +140,5 @@ export class UpdateUserDto {
   @IsOptional()
   weight: string;
 
+ 
 }

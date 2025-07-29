@@ -23,8 +23,16 @@ export const messages = {
   INPUT_MUST_BE_AN_ARRAY: "Input must be an array",
   SUCCESS_RESPONSE:"Success",
   NO_DATA_FOUND: "No data found",
+  INVALID_SOCIAL_AUTH_TYPE: "Invalid social auth type",
+  INVALID_APPLE_TOKEN: "Invalid apple token",
+  EMAIL_NOT_PROVIDED_BY_PROVIDER: "Email not provided by provider",
+  GOOGLE_TOKEN_EXPIRED: "Google token expired",
+  INVALID_GOOGLE_TOKEN: "Invalid google token",
+  TOKEN_USED_TOO_LATE: 'Token used too late',
+  USER_AUTHENTICATED_SUCCESSFULLY: "User authenticated successfully",
+  SOMETHING_WENT_WRONG: "Something went wrong",
   ALL_ACCOUNTS_DATA: "All accounts data",
   FORM_NOT_FOUND: "Form not found",
   FAILED_TO_UPDATE_FORM: "Failed to update form",
-  USER_DATA_FETCHED_SUCCESSFULLY: "User data fetched successfully",
+  USER_DATA_FETCHED_SUCCESSFULLY: "User data fetched successfully"
 };
