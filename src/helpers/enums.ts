@@ -39,3 +39,10 @@ export enum UserRestrictionType {
   BLOCKED = 'blocked',
   RESTRICTED = 'restricted',
 }
+
+
+export enum SortBy{
+  fullName = "1",
+  candidateId = "2",
+  submissionDate = "3",
+}

@@ -159,7 +159,7 @@ export class AuthService {
 
   async adminLogin(adminLoginDto: AdminLoginDto): Promise<{ success: boolean, message: string, data?: object }> {
     const { email, password } = adminLoginDto
-    const findUser = await this.userModel.findOne({ $or: [{ email: email }, { userName: email }] }, { email: 1, firstName: 1, lastName: 1, role: 1, userName: 1 })
+    const findUser = await this.userModel.findOne({ $or: [{ email: email }, { userName: email }] }, { email: 1, firstName: 1, lastName: 1, role: 1, userName: 1, password: 1 })
     if (!findUser) {
       return { success: false, message: messages.USER_NOT_FOUND }
     }

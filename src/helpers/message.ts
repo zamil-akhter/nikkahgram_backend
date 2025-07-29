@@ -22,5 +22,9 @@ export const messages = {
   INVALID_ROLE: "Invalid role",
   INPUT_MUST_BE_AN_ARRAY: "Input must be an array",
   SUCCESS_RESPONSE:"Success",
-  NO_DATA_FOUND: "No data found"
+  NO_DATA_FOUND: "No data found",
+  ALL_ACCOUNTS_DATA: "All accounts data",
+  FORM_NOT_FOUND: "Form not found",
+  FAILED_TO_UPDATE_FORM: "Failed to update form",
+  USER_DATA_FETCHED_SUCCESSFULLY: "User data fetched successfully",
 };

@@ -1,42 +1,43 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-import { IsArray, IsBoolean, IsNotEmpty, IsOptional, IsString, ValidateNested } from "class-validator";
+import { IsArray, IsBoolean, IsLowercase, IsMongoId, IsNotEmpty, IsNumber, IsObject, IsOptional, IsString, ValidateNested } from "class-validator";
 
 
 export class OptionsValueDto {
     @IsNotEmpty()
     @ApiProperty()
     @IsString()
-    name: string
+    label: string
+   
+    @IsNotEmpty()
+    @ApiProperty()
+    @IsString()
+    value: string
 
     @ApiProperty()
-    @IsNotEmpty()
+    @IsOptional()
     @IsBoolean()
     isVisible: boolean
 
     @ApiProperty()
-    @IsNotEmpty()
-    @IsString()
-    position: string
+    @IsOptional()
+    @IsNumber()
+    position: number
 }
 
 
 
 export class FormsDataDto {
-    @IsNotEmpty()
-    @IsString()
-    @ApiProperty()
-    formType: string
-
-    @ApiProperty()
-    @IsNotEmpty()
-    @IsString()
-    step: string
 
     @ApiProperty()
     @IsNotEmpty()
     @IsString()
     keyName: string
+
+    @ApiProperty()
+    @IsNotEmpty()
+    @IsString()
+    label: string
 
     @ApiProperty()
     @IsNotEmpty()
@@ -55,8 +56,8 @@ export class FormsDataDto {
 
     @ApiProperty()
     @IsNotEmpty()
-    @IsString()
-    position: string
+    @IsNumber()
+    position: number
 
     @ApiProperty({
         type: [OptionsValueDto],
@@ -67,6 +68,11 @@ export class FormsDataDto {
     @ValidateNested({ each: true })
     @Type(() => OptionsValueDto)
     optionsValue: OptionsValueDto[]
+
+    @ApiProperty()
+    @IsOptional()
+    @IsObject()
+    rules: object
 }
 
 
@@ -74,11 +80,32 @@ export class FormsDataDto {
 
 export class FormDto {
 
+    @ApiProperty()
+    @IsNotEmpty()
+    @IsLowercase()
+    @IsString()
+    formType: string
+
+    @ApiProperty()
+    @IsNotEmpty()
+    @IsString()
+    step: string
+
+    @ApiProperty()
+    @IsOptional()
+    @IsString()
+    title: string
+
+    @ApiProperty()
+    @IsOptional()
+    @IsString()
+    subtitle: string
+
     @ApiProperty({
         type: [FormsDataDto],
         description: 'Array of form data objects',
     })
-    @IsNotEmpty()
+    @IsOptional()
     @IsArray()
     @ValidateNested({ each: true })
     @Type(() => FormsDataDto)
@@ -91,6 +118,7 @@ export class GetFormDataDto{
     
     @ApiProperty()
     @IsNotEmpty()
+    @IsLowercase()
     @IsString()
     formType: string
 
@@ -121,5 +149,34 @@ export class GetAllAccountsDto{
     @ApiProperty()
     @IsOptional()
     @IsString()
-    filter: string
+    genderFilter: string
+
+    @ApiProperty()
+    @IsOptional()
+    @IsString()
+    statusFilter: string
+
+    @ApiProperty()
+    @IsOptional()
+    @IsString()
+    sortBy: string
+
+    @ApiProperty()
+    @IsOptional()
+    @IsString()
+    sortType: string
+}
+
+export class GetAccountDetailsDto{
+    @IsNotEmpty()
+    @IsMongoId()
+    @IsString()
+    userId: string
+}
+
+export class UpdateAccountDto{
+    @IsNotEmpty()
+    @IsString()
+    @IsMongoId()
+    userId: string
 }

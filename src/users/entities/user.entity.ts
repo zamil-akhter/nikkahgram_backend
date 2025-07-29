@@ -71,7 +71,7 @@ export class User extends Document {
   maritalCategory: string[];
 
   @Prop({ default: '' })
-  childrenStatus: string;
+  children: string;
 
   @Prop({ type: [String], default: [] })
   exemption: string[];
@@ -226,6 +226,9 @@ export class User extends Document {
 
   @Prop({ default: false })
   isRestricted: boolean;
+
+  @Prop({ default: '' })
+  status: string;
 
   @Prop({ default: 1 })
   step: number;

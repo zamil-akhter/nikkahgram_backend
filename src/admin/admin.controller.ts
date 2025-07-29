@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Res, UseGuards, Query } from '@nestjs/common';
 import { AdminService } from './admin.service';
-import { FormDto, GetAllAccountsDto, GetFormDataDto } from './dto/admin.dto';
+import { FormDto, GetAccountDetailsDto, GetAllAccountsDto, GetFormDataDto } from './dto/admin.dto';
 import { ResponseHandler } from 'src/helpers/response-handler';
 import { messages } from 'src/helpers/message';
 import { Response } from 'express';
@@ -31,6 +31,19 @@ export class AdminController {
     }
   }
 
+  @Get("get-all-forms")
+  @ApiBearerAuth()
+  async getAllForms(@Res() res: Response) {
+    try {
+      const result = await this.adminService.getAllForms()
+      if (result.success) {
+        return this.responseHandler.successResponseWithData(res, result.message, result.data);
+      }
+      return this.responseHandler.errorResponse(res, result.message);
+    } catch (error) {
+      return this.responseHandler.errorResponseWithData(res, error.message, messages.INTERNAL_SERVER_ERROR);
+    }
+  }
 
   @Get("get-form-data")
   @ApiBearerAuth()
@@ -52,12 +65,34 @@ export class AdminController {
   async getAllAccounts(@Res() res: Response, @Query() data: GetAllAccountsDto){
     try {
       const result = await this.adminService.getAllAccounts(data);
-      // if (result.success) {
-      //   return this.responseHandler.successResponseWithData(res, result.message, result.data);
-      // }
-      // return this.responseHandler.errorResponse(res, result.message);
+      if (result.success) {
+        return this.responseHandler.successResponseWithData(res, result.message, result.data);
+      }
+      return this.responseHandler.errorResponse(res, result.message);
     } catch (error) {
       return this.responseHandler.errorResponseWithData(res, error.message, messages.INTERNAL_SERVER_ERROR);
     }
   }
+
+
+  @Get("get-account-details")
+  @ApiBearerAuth()
+  async getAccountDetails(@Res() res: Response, @Query() data: GetAccountDetailsDto){
+    try {
+      const result = await this.adminService.getAccountDetails(data)
+      if(result.success){
+        return this.responseHandler.successResponseWithData(res, result.message, result.data);
+      }
+      return this.responseHandler.errorResponse(res, result.message);
+    } catch (error) {
+      return this.responseHandler.errorResponseWithData(res, error.message, messages.INTERNAL_SERVER_ERROR);
+    }
+  }
+  
+
+  // @Patch("update-account")
+  // @ApiBearerAuth()
+  // async updateAccount(@Res() res: Response, @Body() data: UpdateAccountDto){
+    
+  // }
 }
